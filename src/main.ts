@@ -22,7 +22,7 @@ function init(): void {
 
 function render(): void {
   app.innerHTML = `
-    <button class="nav-reflections" aria-label="View saved reflections">Reflections</button>
+    <button class="nav-reflections" aria-label="Gespeicherte Reflexionen anzeigen">Reflexionen</button>
 
     <header class="logo">
       Phoch<span class="logo-accent">3</span>
@@ -37,15 +37,15 @@ function render(): void {
         <textarea
           class="reflection-input"
           id="reflection-input"
-          placeholder="Write your reflection..."
+          placeholder="Schreibe deine Reflexion..."
         ></textarea>
       </div>
     </main>
 
     <div class="actions">
-      <button class="action-btn" id="new-question-btn">New Question</button>
+      <button class="action-btn" id="new-question-btn">Neue Frage</button>
       <span class="action-divider">|</span>
-      <button class="action-btn" id="save-btn" disabled>Save</button>
+      <button class="action-btn" id="save-btn" disabled>Speichern</button>
     </div>
 
     <footer class="footer">
@@ -55,8 +55,8 @@ function render(): void {
     <!-- Reflections List View -->
     <div class="reflections-view" id="reflections-view">
       <header class="reflections-header">
-        <h2 class="reflections-title">Saved Reflections</h2>
-        <button class="close-btn" id="close-reflections">Close</button>
+        <h2 class="reflections-title">Gespeicherte Reflexionen</h2>
+        <button class="close-btn" id="close-reflections">Schließen</button>
       </header>
       <div class="reflections-list" id="reflections-list"></div>
     </div>
@@ -64,8 +64,8 @@ function render(): void {
     <!-- Reflection Detail View -->
     <div class="reflection-detail" id="reflection-detail">
       <header class="reflections-header">
-        <h2 class="reflections-title">Reflection</h2>
-        <button class="close-btn" id="close-detail">Back</button>
+        <h2 class="reflections-title">Reflexion</h2>
+        <button class="close-btn" id="close-detail">Zurück</button>
       </header>
       <div class="detail-content" id="detail-content"></div>
     </div>
@@ -141,7 +141,7 @@ function showReflectionsView(): void {
   const reflections = getReflections();
 
   if (reflections.length === 0) {
-    listEl.innerHTML = '<p class="empty-state">No reflections saved yet.<br>Long press on a question to start writing.</p>';
+    listEl.innerHTML = '<p class="empty-state">Noch keine Reflexionen gespeichert.<br>Lange auf eine Frage drücken, um zu schreiben.</p>';
   } else {
     listEl.innerHTML = reflections.map(r => `
       <div class="reflection-item" data-id="${r.id}">
@@ -178,7 +178,7 @@ function hideReflectionDetail(): void {
 
 function formatDate(isoString: string): string {
   const date = new Date(isoString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('de-DE', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
