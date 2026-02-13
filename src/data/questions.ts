@@ -7,77 +7,77 @@ export interface Question {
 export const questions: Question[] = [
   {
     id: "q1",
-    text: "What exactly is the real problem — and how would I know it is solved?",
+    text: "Was genau ist das eigentliche Problem — und woran erkenne ich, dass es gelöst ist?",
     tags: ["clarity", "perspective"]
   },
   {
     id: "q2",
-    text: "What part of this situation is within my control?",
+    text: "Was liegt in dieser Situation in meinem Einflussbereich?",
     tags: ["perspective", "clarity"]
   },
   {
     id: "q3",
-    text: "What assumptions am I making right now?",
+    text: "Welche Annahmen treffe ich gerade?",
     tags: ["perspective", "clarity"]
   },
   {
     id: "q4",
-    text: "What would I do if I were not afraid of making a mistake?",
+    text: "Was würde ich tun, wenn ich keine Angst hätte, einen Fehler zu machen?",
     tags: ["fear", "decision"]
   },
   {
     id: "q5",
-    text: "What options exist beyond the obvious ones?",
+    text: "Welche Optionen gibt es jenseits der offensichtlichen?",
     tags: ["perspective", "decision"]
   },
   {
     id: "q6",
-    text: "What is the worst realistic outcome — and how likely is it?",
+    text: "Was ist das schlimmste realistische Ergebnis — und wie wahrscheinlich ist es?",
     tags: ["fear", "perspective"]
   },
   {
     id: "q7",
-    text: "Which of my strengths can I consciously apply here?",
+    text: "Welche meiner Stärken kann ich hier bewusst einsetzen?",
     tags: ["people", "performance"]
   },
   {
     id: "q8",
-    text: "What would an objective outsider notice?",
+    text: "Was würde ein neutraler Außenstehender beobachten?",
     tags: ["perspective", "clarity"]
   },
   {
     id: "q9",
-    text: "What small step could improve this situation today?",
+    text: "Welchen kleinen Schritt könnte ich heute noch gehen?",
     tags: ["performance", "decision"]
   },
   {
     id: "q10",
-    text: "What long-term story do I want to tell about how I handled this?",
+    text: "Welche Geschichte möchte ich später darüber erzählen, wie ich das gemeistert habe?",
     tags: ["perspective", "passion"]
   },
   {
     id: "q11",
-    text: "What is the cost of not acting?",
+    text: "Was kostet es mich, nicht zu handeln?",
     tags: ["decision", "fear"]
   },
   {
     id: "q12",
-    text: "What am I avoiding?",
+    text: "Was vermeide ich gerade?",
     tags: ["fear", "clarity"]
   },
   {
     id: "q13",
-    text: "If this were easy, what would it look like?",
+    text: "Wenn das einfach wäre — wie sähe es dann aus?",
     tags: ["perspective", "clarity"]
   },
   {
     id: "q14",
-    text: "What matters most in this situation?",
+    text: "Was ist in dieser Situation am wichtigsten?",
     tags: ["clarity", "decision"]
   },
   {
     id: "q15",
-    text: "What is the decision I already know I need to make?",
+    text: "Welche Entscheidung weiß ich eigentlich schon, dass ich sie treffen muss?",
     tags: ["decision", "clarity"]
   }
 ];
