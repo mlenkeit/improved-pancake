@@ -105,16 +105,34 @@ function getCurrentQuestion(): Question {
   return shuffledQuestions[currentIndex];
 }
 
-function updateQuestion(question: Question, isInitial = false): void {
+type SlideDirection = 'left' | 'right' | 'none';
+
+function updateQuestion(question: Question, isInitial = false, slideDirection: SlideDirection = 'none'): void {
   const questionEl = document.getElementById('question-text')!;
 
-  // Fade out
-  questionEl.classList.add('fade-out');
+  // Determine exit animation class
+  const exitClass = slideDirection === 'left' ? 'slide-out-left' :
+                    slideDirection === 'right' ? 'slide-out-right' : 'fade-out';
+
+  // Determine enter animation class
+  const enterClass = slideDirection === 'left' ? 'slide-in-from-right' :
+                     slideDirection === 'right' ? 'slide-in-from-left' : '';
+
+  // Slide/fade out current question
+  questionEl.classList.add(exitClass);
 
   setTimeout(() => {
     questionEl.textContent = question.text;
-    questionEl.classList.remove('fade-out');
+    questionEl.classList.remove(exitClass, 'slide-out-left', 'slide-out-right', 'fade-out');
     questionEl.style.transform = '';
+
+    // Apply enter animation for carousel effect
+    if (enterClass) {
+      questionEl.classList.add(enterClass);
+      questionEl.addEventListener('animationend', () => {
+        questionEl.classList.remove(enterClass);
+      }, { once: true });
+    }
 
     // Show swipe hint animation on initial load
     if (isInitial) {
@@ -129,13 +147,13 @@ function updateQuestion(question: Question, isInitial = false): void {
 function showNextQuestion(): void {
   if (isWritingMode) return;
   currentQuestion = getNextQuestion();
-  updateQuestion(currentQuestion);
+  updateQuestion(currentQuestion, false, 'left');
 }
 
 function showPreviousQuestion(): void {
   if (isWritingMode) return;
   currentQuestion = getPreviousQuestion();
-  updateQuestion(currentQuestion);
+  updateQuestion(currentQuestion, false, 'right');
 }
 
 function toggleWritingMode(show: boolean): void {
