@@ -151,26 +151,8 @@ body {
   transition: opacity var(--transition-fade);
 }
 
-/* Ghost swipe animation on load */
-.question.hint-swipe {
-  animation: hintSwipe 800ms ease-in-out 500ms;
-}
-
-@keyframes hintSwipe {
-  0% {
-    transform: translateX(0);
-  }
-  40% {
-    transform: translateX(-30px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-  .question.hint-swipe,
   .question.slide-in-from-right,
   .question.slide-in-from-left {
     animation: none;
@@ -184,6 +166,28 @@ body {
   .question.slide-out-right {
     transform: none;
   }
+}
+
+/* Carousel Dots */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-divider);
+  transition: background 200ms, transform 200ms;
+}
+
+.dot.active {
+  background: var(--accent);
+  transform: scale(1.25);
 }
 
 /* Writing Mode */

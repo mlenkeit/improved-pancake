@@ -20,7 +20,8 @@ function init(): void {
   render();
   initializeQuestions();
   currentQuestion = getCurrentQuestion();
-  updateQuestion(currentQuestion, true);
+  updateQuestion(currentQuestion);
+  updateDots();
   setupEventListeners();
 }
 
@@ -36,6 +37,8 @@ function render(): void {
       <div class="question-container" id="question-area">
         <p class="question" id="question-text"></p>
       </div>
+
+      <div class="carousel-dots" id="carousel-dots"></div>
 
       <div class="writing-mode" id="writing-mode">
         <textarea
@@ -105,9 +108,35 @@ function getCurrentQuestion(): Question {
   return shuffledQuestions[currentIndex];
 }
 
+function updateDots(): void {
+  const dotsContainer = document.getElementById('carousel-dots')!;
+  const totalQuestions = shuffledQuestions.length;
+  const maxDots = 5;
+
+  // Calculate which dots to show (abbreviated view with current in middle when possible)
+  let startIndex: number;
+  if (totalQuestions <= maxDots) {
+    startIndex = 0;
+  } else if (currentIndex <= 2) {
+    startIndex = 0;
+  } else if (currentIndex >= totalQuestions - 2) {
+    startIndex = totalQuestions - maxDots;
+  } else {
+    startIndex = currentIndex - 2;
+  }
+
+  const dotsToShow = Math.min(maxDots, totalQuestions);
+
+  dotsContainer.innerHTML = Array.from({ length: dotsToShow }, (_, i) => {
+    const questionIndex = startIndex + i;
+    const isActive = questionIndex === currentIndex;
+    return `<span class="dot${isActive ? ' active' : ''}" data-index="${questionIndex}"></span>`;
+  }).join('');
+}
+
 type SlideDirection = 'left' | 'right' | 'none';
 
-function updateQuestion(question: Question, isInitial = false, slideDirection: SlideDirection = 'none'): void {
+function updateQuestion(question: Question, slideDirection: SlideDirection = 'none'): void {
   const questionEl = document.getElementById('question-text')!;
 
   // Determine exit animation class
@@ -133,27 +162,21 @@ function updateQuestion(question: Question, isInitial = false, slideDirection: S
         questionEl.classList.remove(enterClass);
       }, { once: true });
     }
-
-    // Show swipe hint animation on initial load
-    if (isInitial) {
-      questionEl.classList.add('hint-swipe');
-      questionEl.addEventListener('animationend', () => {
-        questionEl.classList.remove('hint-swipe');
-      }, { once: true });
-    }
   }, 250);
 }
 
 function showNextQuestion(): void {
   if (isWritingMode) return;
   currentQuestion = getNextQuestion();
-  updateQuestion(currentQuestion, false, 'left');
+  updateQuestion(currentQuestion, 'left');
+  updateDots();
 }
 
 function showPreviousQuestion(): void {
   if (isWritingMode) return;
   currentQuestion = getPreviousQuestion();
-  updateQuestion(currentQuestion, false, 'right');
+  updateQuestion(currentQuestion, 'right');
+  updateDots();
 }
 
 function toggleWritingMode(show: boolean): void {
