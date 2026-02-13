@@ -1,0 +1,371 @@
+/* CSS Variables - Design System */
+:root {
+  /* Colors */
+  --bg-primary: #F5F7FA;
+  --bg-gradient-end: #EDEFF3;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-divider: #D1D5DB;
+  --accent: #2563EB;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Spacing */
+  --padding-horizontal: 24px;
+  --spacing-logo-question: 48px;
+  --spacing-question-actions: 40px;
+
+  /* Animation */
+  --transition-fade: 250ms ease-in-out;
+}
+
+/* Reset and Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-horizontal);
+  padding-top: max(env(safe-area-inset-top), 20px);
+  padding-bottom: max(env(safe-area-inset-bottom), 20px);
+}
+
+/* Logo */
+.logo {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-primary);
+  padding-top: 16px;
+}
+
+.logo-accent {
+  color: var(--accent);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--spacing-logo-question);
+  padding-bottom: var(--spacing-question-actions);
+}
+
+/* Question */
+.question-container {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.question {
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+  text-align: left;
+  opacity: 1;
+  transition: opacity var(--transition-fade);
+}
+
+.question.fade-out {
+  opacity: 0;
+}
+
+/* Writing Mode */
+.writing-mode {
+  margin-top: 32px;
+  display: none;
+}
+
+.writing-mode.active {
+  display: block;
+  animation: slideUp 250ms ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reflection-input {
+  width: 100%;
+  min-height: 150px;
+  padding: 16px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: white;
+  border: 1px solid var(--text-divider);
+  border-radius: 8px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 200ms;
+}
+
+.reflection-input:focus {
+  border-color: var(--accent);
+}
+
+.reflection-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 24px;
+}
+
+.action-btn {
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: color 200ms;
+  touch-action: manipulation;
+}
+
+.action-btn:hover,
+.action-btn:focus {
+  color: var(--text-primary);
+  outline: none;
+}
+
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.action-divider {
+  color: var(--text-divider);
+  font-size: 15px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-divider);
+  padding-top: 16px;
+}
+
+/* Reflections List View */
+.reflections-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.reflections-view.active {
+  display: flex;
+}
+
+.reflections-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px var(--padding-horizontal);
+  padding-top: max(env(safe-area-inset-top), 20px);
+  border-bottom: 1px solid var(--text-divider);
+}
+
+.reflections-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-btn {
+  font-family: var(--font-family);
+  font-size: 15px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.reflections-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--padding-horizontal);
+}
+
+.reflection-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--text-divider);
+  cursor: pointer;
+}
+
+.reflection-item:last-child {
+  border-bottom: none;
+}
+
+.reflection-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.reflection-question {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reflection-preview {
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+}
+
+/* Reflection Detail View */
+.reflection-detail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 101;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.reflection-detail.active {
+  display: flex;
+}
+
+.detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--padding-horizontal);
+}
+
+.detail-date {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.detail-question {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: 24px;
+}
+
+.detail-reflection {
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* Nav button for reflections access */
+.nav-reflections {
+  position: fixed;
+  top: max(env(safe-area-inset-top), 16px);
+  right: 16px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
+}
+
+.nav-reflections:hover {
+  color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  :root {
+    --padding-horizontal: 48px;
+  }
+
+  #app {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .question {
+    font-size: 40px;
+  }
+}
+
+/* Touch feedback */
+@media (hover: none) {
+  .action-btn:active {
+    color: var(--text-primary);
+  }
+}
