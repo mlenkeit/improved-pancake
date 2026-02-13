@@ -4,7 +4,8 @@ import { saveReflection, getReflections, type Reflection } from './storage';
 
 // State
 let currentQuestion: Question;
-let questionQueue: Question[] = [];
+let shuffledQuestions: Question[] = [];
+let currentIndex = 0;
 let isWritingMode = false;
 let longPressTimer: number | null = null;
 let touchStartX = 0;
@@ -17,7 +18,8 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 // Initialize
 function init(): void {
   render();
-  currentQuestion = getNextQuestion();
+  initializeQuestions();
+  currentQuestion = getCurrentQuestion();
   updateQuestion(currentQuestion, true);
   setupEventListeners();
 }
@@ -84,12 +86,23 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+function initializeQuestions(): void {
+  shuffledQuestions = shuffleArray(questions);
+  currentIndex = 0;
+}
+
 function getNextQuestion(): Question {
-  // Refill and shuffle queue when empty
-  if (questionQueue.length === 0) {
-    questionQueue = shuffleArray(questions);
-  }
-  return questionQueue.pop()!;
+  currentIndex = (currentIndex + 1) % shuffledQuestions.length;
+  return shuffledQuestions[currentIndex];
+}
+
+function getPreviousQuestion(): Question {
+  currentIndex = (currentIndex - 1 + shuffledQuestions.length) % shuffledQuestions.length;
+  return shuffledQuestions[currentIndex];
+}
+
+function getCurrentQuestion(): Question {
+  return shuffledQuestions[currentIndex];
 }
 
 function updateQuestion(question: Question, isInitial = false): void {
@@ -113,9 +126,15 @@ function updateQuestion(question: Question, isInitial = false): void {
   }, 250);
 }
 
-function showNewQuestion(): void {
+function showNextQuestion(): void {
   if (isWritingMode) return;
   currentQuestion = getNextQuestion();
+  updateQuestion(currentQuestion);
+}
+
+function showPreviousQuestion(): void {
+  if (isWritingMode) return;
+  currentQuestion = getPreviousQuestion();
   updateQuestion(currentQuestion);
 }
 
@@ -154,7 +173,7 @@ function handleSave(): void {
   });
 
   toggleWritingMode(false);
-  showNewQuestion();
+  showNextQuestion();
 }
 
 function showReflectionsView(): void {
@@ -220,7 +239,7 @@ function setupEventListeners(): void {
   const reflectionsList = document.getElementById('reflections-list')!;
 
   // New question button
-  newQuestionBtn.addEventListener('click', showNewQuestion);
+  newQuestionBtn.addEventListener('click', showNextQuestion);
 
   // Save button
   saveBtn.addEventListener('click', handleSave);
@@ -231,7 +250,7 @@ function setupEventListeners(): void {
   // Tap on question area for new question
   questionArea.addEventListener('click', (e) => {
     if (!isWritingMode && e.target === questionArea || (e.target as Element).classList.contains('question')) {
-      showNewQuestion();
+      showNextQuestion();
     }
   });
 
@@ -331,12 +350,8 @@ function handleTouchMove(e: TouchEvent): void {
     const questionEl = document.getElementById('question-text')!;
     questionEl.classList.add('dragging');
 
-    // Apply resistance for positive (right) drag, allow more for negative (left) drag
-    if (deltaX > 0) {
-      currentDragX = deltaX * 0.3; // Strong resistance when dragging right
-    } else {
-      currentDragX = deltaX * 0.5; // Less resistance when dragging left (intended direction)
-    }
+    // Apply consistent drag resistance in both directions
+    currentDragX = deltaX * 0.5;
 
     questionEl.style.transform = `translateX(${currentDragX}px)`;
   }
@@ -354,11 +369,20 @@ function handleTouchEnd(e: TouchEvent): void {
   const touchEndX = e.changedTouches[0].clientX;
   const swipeDistance = touchStartX - touchEndX;
 
-  // If we were dragging and swiped left enough, show new question
-  if (isDragging && swipeDistance > 50) {
-    showNewQuestion();
+  if (isDragging) {
+    // Swipe left (positive distance) -> next question
+    if (swipeDistance > 50) {
+      showNextQuestion();
+    }
+    // Swipe right (negative distance) -> previous question
+    else if (swipeDistance < -50) {
+      showPreviousQuestion();
+    }
+    // Not enough swipe -> snap back
+    else {
+      questionEl.style.transform = '';
+    }
   } else {
-    // Snap back smoothly
     questionEl.style.transform = '';
   }
 
