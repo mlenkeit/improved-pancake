@@ -8,6 +8,8 @@ let lastQuestionId: string | null = null;
 let isWritingMode = false;
 let longPressTimer: number | null = null;
 let touchStartX = 0;
+let isDragging = false;
+let currentDragX = 0;
 
 // DOM Elements
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -16,7 +18,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 function init(): void {
   render();
   currentQuestion = getRandomQuestion();
-  updateQuestion(currentQuestion);
+  updateQuestion(currentQuestion, true);
   setupEventListeners();
 }
 
@@ -78,7 +80,7 @@ function getRandomQuestion(): Question {
   return availableQuestions[randomIndex];
 }
 
-function updateQuestion(question: Question): void {
+function updateQuestion(question: Question, isInitial = false): void {
   const questionEl = document.getElementById('question-text')!;
 
   // Fade out
@@ -87,7 +89,16 @@ function updateQuestion(question: Question): void {
   setTimeout(() => {
     questionEl.textContent = question.text;
     questionEl.classList.remove('fade-out');
+    questionEl.style.transform = '';
     lastQuestionId = question.id;
+
+    // Show swipe hint animation on initial load
+    if (isInitial) {
+      questionEl.classList.add('hint-swipe');
+      questionEl.addEventListener('animationend', () => {
+        questionEl.classList.remove('hint-swipe');
+      }, { once: true });
+    }
   }, 250);
 }
 
@@ -220,15 +231,19 @@ function setupEventListeners(): void {
 
   questionArea.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
+    isDragging = false;
+    currentDragX = 0;
     startLongPress();
   }, { passive: true });
 
   questionArea.addEventListener('touchend', (e) => {
     cancelLongPress();
-    handleSwipe(e);
+    handleTouchEnd(e);
   });
 
-  questionArea.addEventListener('touchmove', cancelLongPress, { passive: true });
+  questionArea.addEventListener('touchmove', (e) => {
+    handleTouchMove(e);
+  }, { passive: true });
 
   // Close writing mode when clicking outside
   document.addEventListener('click', (e) => {
@@ -291,16 +306,53 @@ function cancelLongPress(): void {
   }
 }
 
-function handleSwipe(e: TouchEvent): void {
+function handleTouchMove(e: TouchEvent): void {
   if (isWritingMode) return;
+
+  const touchCurrentX = e.touches[0].clientX;
+  const deltaX = touchCurrentX - touchStartX;
+
+  // Only start dragging after moving more than 10px (to distinguish from tap)
+  if (Math.abs(deltaX) > 10) {
+    cancelLongPress();
+    isDragging = true;
+
+    const questionEl = document.getElementById('question-text')!;
+    questionEl.classList.add('dragging');
+
+    // Apply resistance for positive (right) drag, allow more for negative (left) drag
+    if (deltaX > 0) {
+      currentDragX = deltaX * 0.3; // Strong resistance when dragging right
+    } else {
+      currentDragX = deltaX * 0.5; // Less resistance when dragging left (intended direction)
+    }
+
+    questionEl.style.transform = `translateX(${currentDragX}px)`;
+  }
+}
+
+function handleTouchEnd(e: TouchEvent): void {
+  const questionEl = document.getElementById('question-text')!;
+  questionEl.classList.remove('dragging');
+
+  if (isWritingMode) {
+    questionEl.style.transform = '';
+    return;
+  }
 
   const touchEndX = e.changedTouches[0].clientX;
   const swipeDistance = touchStartX - touchEndX;
 
-  // Swipe left threshold
-  if (swipeDistance > 50) {
+  // If we were dragging and swiped left enough, show new question
+  if (isDragging && swipeDistance > 50) {
     showNewQuestion();
+  } else {
+    // Snap back smoothly
+    questionEl.style.transform = '';
   }
+
+  isDragging = false;
+  currentDragX = 0;
 }
 
 // Start the app

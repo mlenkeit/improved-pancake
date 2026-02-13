@@ -96,11 +96,46 @@ body {
   color: var(--text-primary);
   text-align: left;
   opacity: 1;
-  transition: opacity var(--transition-fade);
+  transition: opacity var(--transition-fade), transform 0.3s ease-out;
+  transform: translateX(0);
+  will-change: transform, opacity;
 }
 
 .question.fade-out {
   opacity: 0;
+}
+
+/* Dragging state - no transition for immediate feedback */
+.question.dragging {
+  transition: opacity var(--transition-fade);
+}
+
+/* Ghost swipe animation on load */
+.question.hint-swipe {
+  animation: hintSwipe 800ms ease-in-out 500ms;
+}
+
+@keyframes hintSwipe {
+  0% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(-30px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .question.hint-swipe {
+    animation: none;
+  }
+
+  .question {
+    transition: opacity var(--transition-fade);
+  }
 }
 
 /* Writing Mode */
