@@ -4,7 +4,7 @@ import { saveReflection, getReflections, type Reflection } from './storage';
 
 // State
 let currentQuestion: Question;
-let lastQuestionId: string | null = null;
+let questionQueue: Question[] = [];
 let isWritingMode = false;
 let longPressTimer: number | null = null;
 let touchStartX = 0;
@@ -17,7 +17,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 // Initialize
 function init(): void {
   render();
-  currentQuestion = getRandomQuestion();
+  currentQuestion = getNextQuestion();
   updateQuestion(currentQuestion, true);
   setupEventListeners();
 }
@@ -74,10 +74,22 @@ function render(): void {
   `;
 }
 
-function getRandomQuestion(): Question {
-  const availableQuestions = questions.filter(q => q.id !== lastQuestionId);
-  const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-  return availableQuestions[randomIndex];
+// Fisher-Yates shuffle
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function getNextQuestion(): Question {
+  // Refill and shuffle queue when empty
+  if (questionQueue.length === 0) {
+    questionQueue = shuffleArray(questions);
+  }
+  return questionQueue.pop()!;
 }
 
 function updateQuestion(question: Question, isInitial = false): void {
@@ -90,7 +102,6 @@ function updateQuestion(question: Question, isInitial = false): void {
     questionEl.textContent = question.text;
     questionEl.classList.remove('fade-out');
     questionEl.style.transform = '';
-    lastQuestionId = question.id;
 
     // Show swipe hint animation on initial load
     if (isInitial) {
@@ -104,7 +115,7 @@ function updateQuestion(question: Question, isInitial = false): void {
 
 function showNewQuestion(): void {
   if (isWritingMode) return;
-  currentQuestion = getRandomQuestion();
+  currentQuestion = getNextQuestion();
   updateQuestion(currentQuestion);
 }
 
